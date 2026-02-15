@@ -6,6 +6,10 @@ Smart contract implementation for the paper:
 
 Hoyeong Kim, Kyuman Lee — Department of Bio Medical Devices, Graduate School, Gachon University
 
+## Background
+
+Korea enacted the Digital Medical Products Act (DMPA) in January 2024 (effective January 2025), the world's first standalone legislation for digital medical products. DMPA Article 8 introduces a Change Management Plan (CMP) system for AI-SaMD, and Article 11 proviso exempts modifications within the approved plan scope from additional change approval. This system implements the automated scope verification mechanism described in the paper.
+
 ## Architecture
 
 Three Solidity smart contracts (~740 lines total):
@@ -39,6 +43,12 @@ npx hardhat test
 | 3 | Performance degradation detection | NonExempt + Event | PASS |
 | 4 | MFDS regulatory audit query | 3 records + integrity OK | PASS |
 | 5 | Large data addition — rate exceeded | NonExempt | PASS |
+
+## Key Results
+
+- Classification accuracy: 100% (5/5 scenarios)
+- Average processing time: 2.05 seconds
+- Time reduction vs manual process: ~87%
 
 ## License
 
