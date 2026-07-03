@@ -164,8 +164,8 @@ contract ChangeVerifier {
             return (result, recordId);
         }
 
-        // Borderline: performance OK but data rate marginally exceeded
-        if (!dataOK && _isBorderlineDataRate(dataChangeRate, plan.maxDataChangeRate)) {
+        // Borderline: allowed type, performance OK, data rate marginally exceeded
+        if (typeOK && !dataOK && _isBorderlineDataRate(dataChangeRate, plan.maxDataChangeRate)) {
             result = VerificationResult.Borderline;
             recordId = _recordAndReturn(
                 productId, changeType, auc, sensitivity, specificity,

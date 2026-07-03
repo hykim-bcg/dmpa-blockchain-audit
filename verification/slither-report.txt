@@ -1,0 +1,85 @@
+'npx hardhat clean' running (wd: C:\Users\mykim\OneDrive - 블록체인글로벌\CC-Projects\GCU\논문작성(3)\03-학술지논문\04.contracts)
+'npx hardhat clean --global' running (wd: C:\Users\mykim\OneDrive - 블록체인글로벌\CC-Projects\GCU\논문작성(3)\03-학술지논문\04.contracts)
+'npx hardhat compile --force' running (wd: C:\Users\mykim\OneDrive - 블록체인글로벌\CC-Projects\GCU\논문작성(3)\03-학술지논문\04.contracts)
+INFO:Detectors:
+Detector: incorrect-equality
+AuditTrail.verifyIntegrity(bytes32,bytes32) (contracts/AuditTrail.sol#221-226) uses a dangerous strict equality:
+	- records[recordId].ipfsHash == offchainHash (contracts/AuditTrail.sol#225)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+INFO:Detectors:
+Detector: uninitialized-local
+ChangeVerifier.verifyChange(bytes32,uint8,uint16,uint16,uint16,uint16,bytes32,bytes32,bytes32).plan (contracts/ChangeVerifier.sol#122) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables
+INFO:Detectors:
+Detector: events-access
+AuditTrail.setChangeVerifier(address) (contracts/AuditTrail.sol#92-94) should emit an event for: 
+	- changeVerifier = _verifier (contracts/AuditTrail.sol#93) 
+SaMDRegistry.setChangeVerifier(address) (contracts/SaMDRegistry.sol#100-102) should emit an event for: 
+	- changeVerifier = _verifier (contracts/SaMDRegistry.sol#101) 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-access-control
+INFO:Detectors:
+Detector: missing-zero-check
+AuditTrail.setChangeVerifier(address)._verifier (contracts/AuditTrail.sol#92) lacks a zero-check on :
+		- changeVerifier = _verifier (contracts/AuditTrail.sol#93)
+SaMDRegistry.setChangeVerifier(address)._verifier (contracts/SaMDRegistry.sol#100) lacks a zero-check on :
+		- changeVerifier = _verifier (contracts/SaMDRegistry.sol#101)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-zero-address-validation
+INFO:Detectors:
+Detector: reentrancy-events
+Reentrancy in ChangeVerifier._recordAndReturn(bytes32,uint8,uint16,uint16,uint16,uint16,bytes32,bytes32,bytes32,bool,ChangeVerifier.VerificationResult) (contracts/ChangeVerifier.sol#193-229):
+	External calls:
+	- auditTrail.recordChange(recordId,productId,changeType,previousModelHash,newModelHash,dataChangeRate,auc,sensitivity,specificity,withinPlanScope,AuditTrail.VerificationResult(uint8(result)),ipfsHash,msg.sender) (contracts/ChangeVerifier.sol#211-225)
+	Event emitted after the call(s):
+	- ChangeVerified(productId,recordId,result) (contracts/ChangeVerifier.sol#227)
+Reentrancy in ChangeVerifier.verifyChange(bytes32,uint8,uint16,uint16,uint16,uint16,bytes32,bytes32,bytes32) (contracts/ChangeVerifier.sol#68-186):
+	External calls:
+	- registry.updateModelHash(productId,newModelHash) (contracts/ChangeVerifier.sol#144)
+	- recordId = _recordAndReturn(productId,changeType,auc,sensitivity,specificity,dataChangeRate,previousModelHash,newModelHash,ipfsHash,true,result) (contracts/ChangeVerifier.sol#145-149)
+		- auditTrail.recordChange(recordId,productId,changeType,previousModelHash,newModelHash,dataChangeRate,auc,sensitivity,specificity,withinPlanScope,AuditTrail.VerificationResult(uint8(result)),ipfsHash,msg.sender) (contracts/ChangeVerifier.sol#211-225)
+	Event emitted after the call(s):
+	- ChangeVerified(productId,recordId,result) (contracts/ChangeVerifier.sol#227)
+		- recordId = _recordAndReturn(productId,changeType,auc,sensitivity,specificity,dataChangeRate,previousModelHash,newModelHash,ipfsHash,true,result) (contracts/ChangeVerifier.sol#145-149)
+Reentrancy in ChangeVerifier.verifyChange(bytes32,uint8,uint16,uint16,uint16,uint16,bytes32,bytes32,bytes32) (contracts/ChangeVerifier.sol#68-186):
+	External calls:
+	- auditTrail.emitPerformanceDegradation(productId,auc,plan.minAUC) (contracts/ChangeVerifier.sol#157)
+	- recordId = _recordAndReturn(productId,changeType,auc,sensitivity,specificity,dataChangeRate,previousModelHash,newModelHash,ipfsHash,false,result) (contracts/ChangeVerifier.sol#159-163)
+		- auditTrail.recordChange(recordId,productId,changeType,previousModelHash,newModelHash,dataChangeRate,auc,sensitivity,specificity,withinPlanScope,AuditTrail.VerificationResult(uint8(result)),ipfsHash,msg.sender) (contracts/ChangeVerifier.sol#211-225)
+	Event emitted after the call(s):
+	- ChangeVerified(productId,recordId,result) (contracts/ChangeVerifier.sol#227)
+		- recordId = _recordAndReturn(productId,changeType,auc,sensitivity,specificity,dataChangeRate,previousModelHash,newModelHash,ipfsHash,false,result) (contracts/ChangeVerifier.sol#159-163)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4
+INFO:Detectors:
+Detector: timestamp
+AuditTrail.getChangesByPeriod(bytes32,uint256,uint256) (contracts/AuditTrail.sol#169-196) uses timestamp for comparisons
+	Dangerous comparisons:
+	- ts >= fromTime && ts <= toTime (contracts/AuditTrail.sol#180)
+	- ts_scope_1 >= fromTime && ts_scope_1 <= toTime (contracts/AuditTrail.sol#190)
+AuditTrail.verifyIntegrity(bytes32,bytes32) (contracts/AuditTrail.sol#221-226) uses timestamp for comparisons
+	Dangerous comparisons:
+	- records[recordId].ipfsHash == offchainHash (contracts/AuditTrail.sol#225)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+INFO:Detectors:
+Detector: solc-version
+Version constraint 0.8.19 contains known severe issues (https://solidity.readthedocs.io/en/latest/bugs.html)
+	- VerbatimInvalidDeduplication
+	- FullInlinerNonExpressionSplitArgumentEvaluationOrder
+	- MissingSideEffectsOnSelectorAccess.
+It is used by:
+	- 0.8.19 (contracts/AuditTrail.sol#2)
+	- 0.8.19 (contracts/ChangeVerifier.sol#2)
+	- 0.8.19 (contracts/SaMDRegistry.sol#2)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity
+INFO:Detectors:
+Detector: naming-convention
+Parameter AuditTrail.setChangeVerifier(address)._verifier (contracts/AuditTrail.sol#92) is not in mixedCase
+Parameter SaMDRegistry.setChangeVerifier(address)._verifier (contracts/SaMDRegistry.sol#100) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
+INFO:Detectors:
+Detector: immutable-states
+AuditTrail.admin (contracts/AuditTrail.sol#46) should be immutable 
+ChangeVerifier.admin (contracts/ChangeVerifier.sol#34) should be immutable 
+ChangeVerifier.auditTrail (contracts/ChangeVerifier.sol#32) should be immutable 
+ChangeVerifier.registry (contracts/ChangeVerifier.sol#31) should be immutable 
+SaMDRegistry.admin (contracts/SaMDRegistry.sol#46) should be immutable 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-immutable
+INFO:Slither:. analyzed (3 contracts with 101 detectors), 19 result(s) found
