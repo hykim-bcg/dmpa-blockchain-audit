@@ -8,7 +8,7 @@ Hoyeong Kim, Kyuman Lee — Department of Bio Medical Devices, Graduate School, 
 
 ## Background
 
-Korea enacted the Digital Medical Products Act (DMPA) in January 2024 (effective January 2025), the world's first standalone legislation for digital medical products. DMPA Article 8 introduces a Change Management Plan (CMP) system for AI-SaMD, and Article 11 proviso exempts modifications within the approved plan scope from additional change approval. This system implements the automated scope verification mechanism described in the paper.
+Korea enacted the Digital Medical Products Act (DMPA) in January 2024 (effective January 2025), the world's first standalone legislation for digital medical products. Under the DMPA framework, a Change Management Plan (CMP) may be submitted with the manufacturing approval/certification application for AI-enabled digital medical devices (Article 8 of the Act; Articles 7(2) and 9(2) of the Enforcement Rule), and modifications within the approved plan scope are not regarded as significant changes subject to change approval (Article 23(2) of the Enforcement Rule; recording and reporting obligations under Article 11(2) of the Act still apply). This system implements the automated scope verification mechanism described in the paper.
 
 ## Architecture
 
@@ -17,7 +17,7 @@ Three Solidity smart contracts (~740 lines total):
 | Contract | Lines | Role |
 |----------|-------|------|
 | `SaMDRegistry.sol` | 224 | Product registration, Change Management Plan submission/approval, RBAC |
-| `ChangeVerifier.sol` | 281 | Algorithm 1 — DMPA Article 11 proviso exemption verification |
+| `ChangeVerifier.sol` | 281 | Algorithm 1 — DMPA change-approval exemption verification (Enf. Rules §23(2)) |
 | `AuditTrail.sol` | 238 | Immutable change records, history query, integrity verification |
 
 ## Tech Stack

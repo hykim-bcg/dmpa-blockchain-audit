@@ -6,7 +6,7 @@ import "./AuditTrail.sol";
 
 /**
  * @title ChangeVerifier
- * @notice Implements Algorithm 1 — DMPA Article 11 Proviso Exemption
+ * @notice Implements Algorithm 1 — DMPA Change-Approval Exemption
  *         Verification — with borderline detection, cross-contract
  *         record creation and automatic model-hash update.
  * @dev    Core contract of the AI-SaMD change-management audit trail.

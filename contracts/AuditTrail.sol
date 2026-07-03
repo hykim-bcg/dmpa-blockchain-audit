@@ -17,7 +17,7 @@ contract AuditTrail {
      */
     enum VerificationResult {
         NotApplicable,    // 0 – Minor change (code 8-9)
-        Exempt,           // 1 – Exemption approved (§11 proviso)
+        Exempt,           // 1 – Exemption approved (Enf. Rules §23(2))
         NonExempt,        // 2 – Approval required
         Borderline,       // 3 – Manual review recommended
         PendingApproval   // 4 – Major change (code 4-7)
