@@ -1,0 +1,25 @@
+{
+  "KR": {
+    "jurisdiction": "KR",
+    "minAUC": 9000,
+    "minSensitivity": 8500,
+    "minSpecificity": 8500,
+    "maxDataChangeRate": 2000,
+    "allowedChangeTypes": [
+      1,
+      2,
+      3
+    ]
+  },
+  "US": {
+    "jurisdiction": "US",
+    "minAUC": 9300,
+    "minSensitivity": 9000,
+    "minSpecificity": 8800,
+    "maxDataChangeRate": 1000,
+    "allowedChangeTypes": [
+      1,
+      2
+    ]
+  }
+}

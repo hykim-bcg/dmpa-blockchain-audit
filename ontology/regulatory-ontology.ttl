@@ -1,0 +1,247 @@
+@prefix ro:   <https://w3id.org/ai-samd-governance/regonto#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+##############################################################
+#  AI-SaMD Regulatory Governance Ontology (PhD thesis, 5.3.5)
+#  4-Level structure: Principle -> Requirement -> Implementation -> Metric
+#  Encoded from thesis Tables 5-1, 5-6, 5-7, 5-8 (OWL 2 RL profile)
+##############################################################
+
+<https://w3id.org/ai-samd-governance/regonto> a owl:Ontology ;
+    rdfs:label "AI-SaMD Regulatory Governance Ontology"@en ,
+               "AI-SaMD 규제 거버넌스 온톨로지"@ko ;
+    owl:versionInfo "1.0 (2026-07)" .
+
+### ── Classes (Level 1~4 + auxiliaries) ──────────────────────
+
+ro:RegulatoryPrinciple    a owl:Class ; rdfs:label "규제 원칙 (Level 1)"@ko .
+ro:RegulatoryRequirement  a owl:Class ; rdfs:label "규제 요구사항 (Level 2)"@ko .
+ro:TechnicalImplementation a owl:Class ; rdfs:label "기술적 구현 (Level 3)"@ko .
+ro:ValidationMetric       a owl:Class ; rdfs:label "검증 메트릭 (Level 4)"@ko .
+ro:Jurisdiction           a owl:Class ; rdfs:label "관할 규제체계"@ko .
+ro:LegalProvision         a owl:Class ; rdfs:label "법적 근거 조문"@ko .
+ro:PlanParameterSet       a owl:Class ; rdfs:label "변경관리계획 파라미터 세트"@ko .
+
+### ── Object properties ──────────────────────────────────────
+
+ro:realizes a owl:ObjectProperty ;
+    rdfs:label "구체화한다 (요구사항→원칙)"@ko ;
+    rdfs:domain ro:RegulatoryRequirement ; rdfs:range ro:RegulatoryPrinciple .
+
+ro:implements a owl:ObjectProperty ;
+    rdfs:label "구현한다 (기술→요구사항)"@ko ;
+    rdfs:domain ro:TechnicalImplementation ; rdfs:range ro:RegulatoryRequirement .
+
+ro:implementedBy a owl:ObjectProperty ; owl:inverseOf ro:implements .
+
+ro:validates a owl:ObjectProperty ;
+    rdfs:label "검증한다 (메트릭→기술)"@ko ;
+    rdfs:domain ro:ValidationMetric ; rdfs:range ro:TechnicalImplementation .
+
+ro:hasJurisdiction a owl:ObjectProperty ;
+    rdfs:domain ro:RegulatoryRequirement ; rdfs:range ro:Jurisdiction .
+
+ro:groundedIn a owl:ObjectProperty ;
+    rdfs:label "근거 조문"@ko ;
+    rdfs:domain ro:RegulatoryRequirement ; rdfs:range ro:LegalProvision .
+
+ro:derivedFromRequirement a owl:ObjectProperty ;
+    rdfs:domain ro:PlanParameterSet ; rdfs:range ro:RegulatoryRequirement .
+
+ro:appliesTo a owl:ObjectProperty ;
+    rdfs:domain ro:PlanParameterSet ; rdfs:range ro:Jurisdiction .
+
+# 추론 도출 속성 1: 기술이 원칙을 뒷받침한다
+#   implements ∘ realizes ⊑ supports   (OWL 2 RL property chain)
+ro:supports a owl:ObjectProperty ;
+    rdfs:label "뒷받침한다 (기술→원칙, 추론 도출)"@ko ;
+    owl:propertyChainAxiom ( ro:implements ro:realizes ) .
+
+# 추론 도출 속성 2: 메트릭이 원칙까지 추적된다
+#   validates ∘ supports ⊑ traceableTo
+ro:traceableTo a owl:ObjectProperty ;
+    rdfs:label "추적된다 (메트릭→원칙, 추론 도출)"@ko ;
+    owl:propertyChainAxiom ( ro:validates ro:supports ) .
+
+### ── Data properties (파라미터, x10000/x100 스케일링) ────────
+
+ro:minAUC             a owl:DatatypeProperty ; rdfs:domain ro:PlanParameterSet ; rdfs:range xsd:integer .
+ro:minSensitivity     a owl:DatatypeProperty ; rdfs:domain ro:PlanParameterSet ; rdfs:range xsd:integer .
+ro:minSpecificity     a owl:DatatypeProperty ; rdfs:domain ro:PlanParameterSet ; rdfs:range xsd:integer .
+ro:maxDataChangeRate  a owl:DatatypeProperty ; rdfs:domain ro:PlanParameterSet ; rdfs:range xsd:integer .
+ro:allowedChangeType  a owl:DatatypeProperty ; rdfs:domain ro:PlanParameterSet ; rdfs:range xsd:integer .
+ro:provisionRef       a owl:DatatypeProperty ; rdfs:domain ro:LegalProvision ; rdfs:range xsd:string .
+
+### ── Individuals: Level 1 규제 원칙 (표 5-1) ─────────────────
+
+ro:PatientSafety      a ro:RegulatoryPrinciple ; rdfs:label "환자 안전 보호"@ko .
+ro:ChangeTraceability a ro:RegulatoryPrinciple ; rdfs:label "변경 추적성 보장"@ko .
+ro:DataIntegrity      a ro:RegulatoryPrinciple ; rdfs:label "데이터 무결성 확보"@ko .
+ro:Auditability       a ro:RegulatoryPrinciple ; rdfs:label "규제기관 감사 가능성"@ko .
+ro:Transparency       a ro:RegulatoryPrinciple ; rdfs:label "투명성 제공"@ko .
+
+### ── Individuals: 관할 ──────────────────────────────────────
+
+ro:KR a ro:Jurisdiction ; rdfs:label "한국 (DMPA)"@ko .
+ro:US a ro:Jurisdiction ; rdfs:label "미국 (FDA PCCP)"@ko .
+ro:EU a ro:Jurisdiction ; rdfs:label "유럽 (AI Act + MDR)"@ko .
+
+### ── Individuals: 법적 근거 조문 (정정 조문 체계 반영) ────────
+
+ro:DMPA-Act-8        a ro:LegalProvision ; ro:provisionRef "DMPA 법 제8조" .
+ro:DMPA-Act-11-1     a ro:LegalProvision ; ro:provisionRef "DMPA 법 제11조 제1항" .
+ro:DMPA-Act-11-2     a ro:LegalProvision ; ro:provisionRef "DMPA 법 제11조 제2항" .
+ro:DMPA-Act-13       a ro:LegalProvision ; ro:provisionRef "DMPA 법 제13조" .
+ro:DMPA-Act-14       a ro:LegalProvision ; ro:provisionRef "DMPA 법 제14조" .
+ro:DMPA-Act-15       a ro:LegalProvision ; ro:provisionRef "DMPA 법 제15조" .
+ro:DMPA-Act-22       a ro:LegalProvision ; ro:provisionRef "DMPA 법 제22조" .
+ro:DMPA-Act-24       a ro:LegalProvision ; ro:provisionRef "DMPA 법 제24조" .
+ro:DMPA-EnfRule-7-2  a ro:LegalProvision ; ro:provisionRef "DMPA 시행규칙 제7조 제2항" .
+ro:DMPA-EnfRule-23-1 a ro:LegalProvision ; ro:provisionRef "DMPA 시행규칙 제23조 제1항" .
+ro:DMPA-EnfRule-23-2 a ro:LegalProvision ; ro:provisionRef "DMPA 시행규칙 제23조 제2항" .
+ro:FDA-PCCP-GL       a ro:LegalProvision ; ro:provisionRef "FDA PCCP Final Guidance (2024)" .
+ro:FDA-CFR-803       a ro:LegalProvision ; ro:provisionRef "FDA 21 CFR Part 803" .
+ro:EU-AIAct-12       a ro:LegalProvision ; ro:provisionRef "EU AI Act Article 12" .
+ro:EU-AIAct-13       a ro:LegalProvision ; ro:provisionRef "EU AI Act Article 13" .
+ro:EU-MDR-83-86      a ro:LegalProvision ; ro:provisionRef "EU MDR Articles 83-86" .
+
+### ── Individuals: Level 2 규제 요구사항 (표 5-6, 9행) ────────
+
+ro:PlanRegistration a ro:RegulatoryRequirement ;
+    rdfs:label "변경관리계획서 등록"@ko ;
+    ro:realizes ro:ChangeTraceability ;
+    ro:hasJurisdiction ro:KR , ro:US ;
+    ro:groundedIn ro:DMPA-Act-8 , ro:DMPA-EnfRule-7-2 , ro:FDA-PCCP-GL .
+
+ro:ExemptionDetermination a ro:RegulatoryRequirement ;
+    rdfs:label "변경허가/면제 판정"@ko ;
+    ro:realizes ro:ChangeTraceability , ro:PatientSafety ;
+    ro:hasJurisdiction ro:KR , ro:US ;
+    ro:groundedIn ro:DMPA-Act-11-1 , ro:DMPA-EnfRule-23-2 , ro:FDA-PCCP-GL .
+
+ro:ChangeTypeClassification a ro:RegulatoryRequirement ;
+    rdfs:label "변경 유형 분류"@ko ;
+    ro:realizes ro:ChangeTraceability ;
+    ro:hasJurisdiction ro:KR , ro:US , ro:EU ;
+    ro:groundedIn ro:DMPA-EnfRule-23-1 , ro:FDA-PCCP-GL .
+
+ro:ImmutableAuditTrail a ro:RegulatoryRequirement ;
+    rdfs:label "불변적 감사 추적"@ko ;
+    ro:realizes ro:ChangeTraceability , ro:Auditability ;
+    ro:hasJurisdiction ro:KR , ro:US , ro:EU ;
+    ro:groundedIn ro:DMPA-Act-11-2 , ro:EU-AIAct-12 .
+
+ro:SWQualityManagement a ro:RegulatoryRequirement ;
+    rdfs:label "SW 품질관리기준 적합판정"@ko ;
+    ro:realizes ro:PatientSafety , ro:DataIntegrity ;
+    ro:hasJurisdiction ro:KR , ro:US , ro:EU ;
+    ro:groundedIn ro:DMPA-Act-24 .
+
+ro:Cybersecurity a ro:RegulatoryRequirement ;
+    rdfs:label "사이버보안 (전자적 침해행위 보호)"@ko ;
+    ro:realizes ro:DataIntegrity , ro:PatientSafety ;
+    ro:hasJurisdiction ro:KR , ro:US , ro:EU ;
+    ro:groundedIn ro:DMPA-Act-14 .
+
+ro:RealWorldEvaluation a ro:RegulatoryRequirement ;
+    rdfs:label "실사용 평가 (RWD)"@ko ;
+    ro:realizes ro:PatientSafety , ro:DataIntegrity ;
+    ro:hasJurisdiction ro:KR , ro:US , ro:EU ;
+    ro:groundedIn ro:DMPA-Act-15 , ro:EU-MDR-83-86 .
+
+ro:AdverseEventReporting a ro:RegulatoryRequirement ;
+    rdfs:label "이상사례·안전관리 보고"@ko ;
+    ro:realizes ro:PatientSafety ;
+    ro:hasJurisdiction ro:KR , ro:US , ro:EU ;
+    ro:groundedIn ro:DMPA-Act-13 , ro:DMPA-Act-11-2 , ro:FDA-CFR-803 , ro:EU-MDR-83-86 .
+
+ro:VersionDisclosure a ro:RegulatoryRequirement ;
+    rdfs:label "버전·AI 정보 표시"@ko ;
+    ro:realizes ro:Transparency ;
+    ro:hasJurisdiction ro:KR , ro:US , ro:EU ;
+    ro:groundedIn ro:DMPA-Act-22 , ro:EU-AIAct-13 .
+
+### ── Individuals: Level 3 기술적 구현 (표 5-7, 7행) ──────────
+
+ro:SmartContractAdjudication a ro:TechnicalImplementation ;
+    rdfs:label "스마트 컨트랙트 자동 판정 (Algorithm 1)"@ko ;
+    ro:implements ro:ExemptionDetermination , ro:ChangeTypeClassification .
+
+ro:HashIntegrityVerification a ro:TechnicalImplementation ;
+    rdfs:label "해시 기반 무결성 검증"@ko ;
+    ro:implements ro:ImmutableAuditTrail , ro:RealWorldEvaluation , ro:Cybersecurity .
+
+ro:RBACAccessControl a ro:TechnicalImplementation ;
+    rdfs:label "RBAC 접근 제어"@ko ;
+    ro:implements ro:ImmutableAuditTrail , ro:Cybersecurity .
+
+ro:EventNotification a ro:TechnicalImplementation ;
+    rdfs:label "이벤트 기반 알림"@ko ;
+    ro:implements ro:AdverseEventReporting .
+
+ro:IPFSOffchainStorage a ro:TechnicalImplementation ;
+    rdfs:label "IPFS 오프체인 저장"@ko ;
+    ro:implements ro:RealWorldEvaluation , ro:SWQualityManagement .
+
+ro:OnchainPlanRegistry a ro:TechnicalImplementation ;
+    rdfs:label "온체인 계획서 등록 (SaMDRegistry)"@ko ;
+    ro:implements ro:PlanRegistration , ro:SWQualityManagement .
+
+ro:NFTMetadata a ro:TechnicalImplementation ;
+    rdfs:label "NFT 메타데이터 (IP-NFT)"@ko ;
+    ro:implements ro:VersionDisclosure .
+
+### ── Individuals: Level 4 검증 메트릭 (표 5-8, 8행) ──────────
+
+ro:DeterminationAccuracy a ro:ValidationMetric ;
+    rdfs:label "면제 판정 정확도 100% (7/7 + 차분 2,000건)"@ko ;
+    ro:validates ro:SmartContractAdjudication .
+
+ro:ClassificationAccuracy a ro:ValidationMetric ;
+    rdfs:label "변경 유형 분류 정확도 100%"@ko ;
+    ro:validates ro:SmartContractAdjudication .
+
+ro:ProcessingTime a ro:ValidationMetric ;
+    rdfs:label "평균 처리 시간 2.05초"@ko ;
+    ro:validates ro:SmartContractAdjudication .
+
+ro:AuditCompleteness a ro:ValidationMetric ;
+    rdfs:label "감사 추적 완전성 100%"@ko ;
+    ro:validates ro:OnchainPlanRegistry , ro:RBACAccessControl .
+
+ro:HashIntegrityRate a ro:ValidationMetric ;
+    rdfs:label "해시 무결성 검증률 100%"@ko ;
+    ro:validates ro:HashIntegrityVerification .
+
+ro:AlertAccuracy a ro:ValidationMetric ;
+    rdfs:label "PMS 경보 정확도 100% (3/3)"@ko ;
+    ro:validates ro:EventNotification .
+
+ro:FalsePositiveRate a ro:ValidationMetric ;
+    rdfs:label "위양성률 1.4% (1,000회 MC)"@ko ;
+    ro:validates ro:EventNotification .
+
+ro:EventPropagationAccuracy a ro:ValidationMetric ;
+    rdfs:label "이벤트 전파 정확도 100% (15/15)"@ko ;
+    ro:validates ro:EventNotification , ro:IPFSOffchainStorage , ro:NFTMetadata .
+
+### ── Individuals: 관할별 계획 파라미터 세트 (4.2.7 실증과 연동) ──
+
+ro:KR-DMPA-PlanParams a ro:PlanParameterSet ;
+    rdfs:label "KR-DMPA 변경관리계획 파라미터"@ko ;
+    ro:appliesTo ro:KR ;
+    ro:derivedFromRequirement ro:ExemptionDetermination ;
+    ro:minAUC 9000 ; ro:minSensitivity 8500 ; ro:minSpecificity 8500 ;
+    ro:maxDataChangeRate 2000 ;
+    ro:allowedChangeType 1 , 2 , 3 .
+
+ro:US-PCCP-PlanParams a ro:PlanParameterSet ;
+    rdfs:label "US-PCCP 변경 프로토콜 파라미터 (예시적)"@ko ;
+    ro:appliesTo ro:US ;
+    ro:derivedFromRequirement ro:ExemptionDetermination ;
+    ro:minAUC 9300 ; ro:minSensitivity 9000 ; ro:minSpecificity 8800 ;
+    ro:maxDataChangeRate 1000 ;
+    ro:allowedChangeType 1 , 2 .
