@@ -1,0 +1,79 @@
+@prefix ro:   <https://w3id.org/ai-samd-governance/regonto#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+##############################################################
+#  Temporal versioning extension (thesis 5.3.5)
+#  조문 개정의 시간 버전 관리 — 시점별 유효 조문의 기계적 재구성
+#  실제 사건 모델링: DMPA 시행규칙 제정판(총리령 제1900호,
+#  2025-02-28 시행) -> 2026-01-24 개정 시행판
+##############################################################
+
+### 확장 클래스·속성
+
+ro:ProvisionVersion a owl:Class ;
+    rdfs:label "조문 버전"@ko ; rdfs:subClassOf ro:LegalProvision .
+
+ro:hasVersion a owl:ObjectProperty ;
+    rdfs:domain ro:LegalProvision ; rdfs:range ro:ProvisionVersion ;
+    rdfs:label "버전을 가진다 (추상 조문 -> 시점 버전)"@ko .
+
+ro:supersedes a owl:ObjectProperty ;
+    rdfs:domain ro:ProvisionVersion ; rdfs:range ro:ProvisionVersion ;
+    rdfs:label "대체한다 (신버전 -> 구버전)"@ko .
+
+ro:validFrom  a owl:DatatypeProperty ; rdfs:range xsd:date ;
+    rdfs:label "효력 개시일"@ko .
+ro:validUntil a owl:DatatypeProperty ; rdfs:range xsd:date ;
+    rdfs:label "효력 종료일 (개방 구간이면 미기재)"@ko .
+ro:instrumentRef a owl:DatatypeProperty ; rdfs:range xsd:string ;
+    rdfs:label "제·개정 법령 문서"@ko .
+ro:effectiveFrom a owl:DatatypeProperty ;
+    rdfs:domain ro:PlanParameterSet ; rdfs:range xsd:date ;
+    rdfs:label "파라미터 세트 적용 개시일"@ko .
+
+### 시행규칙 제23조 제2항 — 두 시점 버전
+
+ro:DMPA-EnfRule-23-2-v2025 a ro:ProvisionVersion ;
+    rdfs:label "시행규칙 제23조 제2항 (제정판)"@ko ;
+    ro:provisionRef "DMPA 시행규칙 제23조 제2항" ;
+    ro:instrumentRef "총리령 제1900호 (2025-02-28 시행)" ;
+    ro:validFrom "2025-02-28"^^xsd:date ;
+    ro:validUntil "2026-01-23"^^xsd:date .
+
+ro:DMPA-EnfRule-23-2-v2026 a ro:ProvisionVersion ;
+    rdfs:label "시행규칙 제23조 제2항 (2026 개정판)"@ko ;
+    ro:provisionRef "DMPA 시행규칙 제23조 제2항" ;
+    ro:instrumentRef "2026-01-23 공포 개정 총리령 (2026-01-24 시행)" ;
+    ro:validFrom "2026-01-24"^^xsd:date ;
+    ro:supersedes ro:DMPA-EnfRule-23-2-v2025 .
+
+# 추상 조문(기존 개별자)과 버전의 연결
+ro:DMPA-EnfRule-23-2
+    ro:hasVersion ro:DMPA-EnfRule-23-2-v2025 , ro:DMPA-EnfRule-23-2-v2026 .
+
+### 시행규칙 제7조 제2항 — AI 기본법 시행(2026-01-22)에 따른
+### 인공지능기술 정의 인용의 확정 사건을 버전 경계로 모델링
+
+ro:DMPA-EnfRule-7-2-v2025 a ro:ProvisionVersion ;
+    rdfs:label "시행규칙 제7조 제2항 (제정판)"@ko ;
+    ro:provisionRef "DMPA 시행규칙 제7조 제2항" ;
+    ro:instrumentRef "총리령 제1900호 (2025-02-28 시행)" ;
+    ro:validFrom "2025-02-28"^^xsd:date ;
+    ro:validUntil "2026-01-23"^^xsd:date .
+
+ro:DMPA-EnfRule-7-2-v2026 a ro:ProvisionVersion ;
+    rdfs:label "시행규칙 제7조 제2항 (2026 개정판, AI 기본법 제2조 제3호 인용)"@ko ;
+    ro:provisionRef "DMPA 시행규칙 제7조 제2항" ;
+    ro:instrumentRef "2026-01-23 공포 개정 총리령 (2026-01-24 시행)" ;
+    ro:validFrom "2026-01-24"^^xsd:date ;
+    ro:supersedes ro:DMPA-EnfRule-7-2-v2025 .
+
+ro:DMPA-EnfRule-7-2
+    ro:hasVersion ro:DMPA-EnfRule-7-2-v2025 , ro:DMPA-EnfRule-7-2-v2026 .
+
+### 파라미터 세트의 적용 개시일 (소급 감사용)
+
+ro:KR-DMPA-PlanParams ro:effectiveFrom "2025-02-28"^^xsd:date .
+ro:US-PCCP-PlanParams ro:effectiveFrom "2024-12-01"^^xsd:date .

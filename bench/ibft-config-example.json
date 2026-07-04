@@ -1,0 +1,32 @@
+{
+  "genesis": {
+    "config": {
+      "chainId": 2026,
+      "berlinBlock": 0,
+      "contractSizeLimit": 2147483647,
+      "ibft2": {
+        "blockperiodseconds": 2,
+        "epochlength": 30000,
+        "requesttimeoutseconds": 4
+      }
+    },
+    "nonce": "0x0",
+    "timestamp": "0x0",
+    "gasLimit": "0x1C9C380",
+    "difficulty": "0x1",
+    "alloc": {
+      "15ca48dE78f339C5B701c29C51E918dA582216D7": {
+        "balance": "0xC9F2C9CD04674EDEA40000000"
+      },
+      "70997970C51812dc3A010C7d01b50e0d17dc79C8": {
+        "balance": "0xC9F2C9CD04674EDEA40000000"
+      }
+    }
+  },
+  "blockchain": {
+    "nodes": {
+      "generate": true,
+      "count": 4
+    }
+  }
+}
